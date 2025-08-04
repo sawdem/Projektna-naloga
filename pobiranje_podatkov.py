@@ -1,5 +1,6 @@
 import requests
 import time
+import os
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0',
@@ -14,6 +15,8 @@ headers = {
     'Sec-Fetch-Site': 'none',
     'Sec-Fetch-User': '?1',
 }
+
+
 def pobiranje_podatkov():
     seznam_urljev = [
                     "https://www.yugiohcardguide.com/spells/normal-spells.html",
@@ -39,7 +42,7 @@ def pobiranje_podatkov():
         zadnji_odziv = requests.get(url, headers=headers)
         if zadnji_odziv.status_code == 200:
             time.sleep(10)
-            with open(f"{t}.html", "w", encoding='utf-8') as f:
+            with open(os.path.join("htmlji", f"{t}.html"), "w", encoding='utf-8') as f:
                 f.write(zadnji_odziv.text)
         else:
             print("napačna koda", zadnji_odziv.status_code)
