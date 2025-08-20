@@ -8,33 +8,19 @@ def izlusci_podatke_trap_in_spell():
         r"<b>(?P<ime>.+?)</b></a>\s*<br>\s*(?P<sifra>\d+)\s*</td>\s*<td>(?P<efekt>.+?)</td>",
         re.DOTALL
     )
-    for t in range(1, 10):
-        if t <= 6:
+    for t in range(9):
+        if t <= 5:
             tip = "spell"
-            if t == 1:
-                podtip = "normal"
-            elif t == 2:
-                podtip = "continuous"
-            elif t == 3:
-                podtip = "equip"
-            elif t == 4:
-                podtip = "field"
-            elif t == 5:
-                podtip = "quick-play"
-            elif t == 6:
-                podtip = "ritual"
+            podtip = ["normal", "continous", "equip", "field", "quick-play", "ritual"][t]
         else:
             tip = "trap"
-            if t == 7:
-                podtip = "normal"
-            elif t == 8:
-                podtip = "continuous"
-            elif t == 9:
-                podtip = "counter"
+            podtip = ["normal", "continous", "counter"][t - 6]
 
-        with open(f"htmlji/{t}.html", "r", encoding="utf-8") as dat:
+        with open(f"htmlji/{t + 1}.html", "r", encoding="utf-8") as dat:
             text = dat.read()
             for najdba in vzorec.finditer(text):
+                if len(najdba.group("ime")) > 200:
+                    continue
                 slovar = {
                     "tip": podtip + " " + tip,
                     "ime": najdba.group("ime"),
@@ -78,23 +64,15 @@ def izlusci_podatke_monster():
         with open(f"htmlji/{t}.html", "r", encoding="utf-8") as dat:
             text = dat.read()
             for najdba in vzorec.finditer(text):
-                if najdba.group("sifra") in ["73146473", "81759748", "40227329",
-                                             "04271596", "12338068", "48948935",
-                                             "30086349", "90884403", "53134520",
-                                             "14212201", "17663375", "76184692",
-                                             "26842483", "12652643", "62873545",
-                                             "14506878", "31038159", "85800949",
-                                             "64025981", "45500495", "12927849",
-                                             "20474741", "84650463", "76902476",
-                                             "17238333", "82670878"]:
-    # nestandardno zapisani na spletni strani
+                if (len(najdba.group("ime")) > 200) or (not najdba.group("sifra").isnumeric()):
                     continue
+            # nestandardno zapisani na spletni strani
                 atribut = vzorec2.findall(text)[0]
                 slovar = {
                     "atribut": atribut,
                     "ime": najdba.group("ime"),
                     "sifra": najdba.group("sifra"),
-                    "efekt": najdba.group("efekt"),
+                    "efekt": najdba.group("efekt").replace("\n", " "),
                     "ATK": najdba.group("ATK"),
                     "DEF": najdba.group("DEF"),
                     "level": najdba.group("level"),
